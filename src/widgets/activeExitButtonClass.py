@@ -8,53 +8,55 @@ import src.widgets
 import logging
 from lxml import etree
 
+
 class activeExitButtonClass(BaseWidget):
-	''' This class is a stub; no actual output will go to the ui file '''
+    """ This class is a stub; no actual output will go to the ui file """
 
-	count = 0
-	@staticmethod
-	def incrcount():
-		activeExitButtonClass.count += 1
-		return activeExitButtonClass.count
+    count = 0
 
-	def __init__(self, widget):
-		self.logger = logging.getLogger(self.__class__.__name__)
-		super(activeExitButtonClass, self).__init__(widget)
-		self.count = activeExitButtonClass.incrcount()
+    @staticmethod
+    def incrcount():
+        activeExitButtonClass.count += 1
+        return activeExitButtonClass.count
 
-	def widgetUI(self, parent):
-		return None
+    def __init__(self, widget):
+        self.logger = logging.getLogger(self.__class__.__name__)
+        super(activeExitButtonClass, self).__init__(widget)
+        self.count = activeExitButtonClass.incrcount()
 
-		#self.property(elem, 'exitProgram', 'exitProgram', 'boolean')
-		#self.property(elem, 'bgColor', 'bgColor', 'color')
-		''' apply to parent '''
-		#self.property(elem, 'controlParent', 'controlParent', 'boolean')
-		#self.property(elem, 'label', 'label', 'string')
-		#self.property(elem, 'topShadowColor', 'topShadowColor', 'color')
-		#self.property(elem, 'iconify', 'iconify', 'boolean')
-		#self.property(elem, 'botShadowColor', 'botShadowColor', 'color')
-		#self.property(elem, 'font', 'font', 'font')
-		#self.property(elem, 'invisible', 'invisible', 'boolean')
-		#self.property(elem, 'fgColor', 'fgColor', 'color')
-		#self.property(elem, '3d', '3d', 'boolean')
+    def widgetUI(self, parent):
+        return None
 
-		#return elem
+        # self.property(elem, 'exitProgram', 'exitProgram', 'boolean')
+        # self.property(elem, 'bgColor', 'bgColor', 'color')
+        """ apply to parent """
+        # self.property(elem, 'controlParent', 'controlParent', 'boolean')
+        # self.property(elem, 'label', 'label', 'string')
+        # self.property(elem, 'topShadowColor', 'topShadowColor', 'color')
+        # self.property(elem, 'iconify', 'iconify', 'boolean')
+        # self.property(elem, 'botShadowColor', 'botShadowColor', 'color')
+        # self.property(elem, 'font', 'font', 'font')
+        # self.property(elem, 'invisible', 'invisible', 'boolean')
+        # self.property(elem, 'fgColor', 'fgColor', 'color')
+        # self.property(elem, '3d', '3d', 'boolean')
 
-	def isBuiltInWidget(self):
-		''' Pretend this is a built-in widget so the custom widget def doesn't get written '''
-		return True
+        # return elem
 
-	def isContainer(self):
-		return False
+    def isBuiltInWidget(self):
+        """ Pretend this is a built-in widget so the custom widget def doesn't get written """
+        return True
 
-	def widgetType(self):
-		pass
+    def isContainer(self):
+        return False
 
-	def widgetName(self):
-		return 'qeactiveExitButtonClass_%d' % activeExitButtonClass.count
+    def widgetType(self):
+        pass
 
-	def widgetBaseClass(self):
-		pass
+    def widgetName(self):
+        return "qeactiveExitButtonClass_%d" % activeExitButtonClass.count
 
-	def widgetHeader(self):
-		pass
+    def widgetBaseClass(self):
+        pass
+
+    def widgetHeader(self):
+        pass
