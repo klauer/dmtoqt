@@ -16,12 +16,13 @@ from __future__ import print_function
 # in the file LICENSE that is included with this distribution.
 ###########################################################################
 
-import os
-import sys
-import logging
 import argparse
-import subprocess
+import logging
+import os
 import re
+import subprocess
+import sys
+
 from .edmVarTypes import Variable, knownVariableTypes
 
 

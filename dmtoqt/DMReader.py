@@ -10,10 +10,11 @@
 ###########################################################################
 
 import logging
-import sys
 import os
 import re
+import sys
 from collections import OrderedDict
+
 from .EDMWidget import EDMWidget
 from .StackedEDMWidget import StackedEDMWidget
 

@@ -1,6 +1,6 @@
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtDesigner import QPyDesignerTaskMenuExtension
 from PyQt5.QtWidgets import QAction
-from PyQt5.QtCore import pyqtSlot
 
 
 class UIParserTaskMenuExtension(QPyDesignerTaskMenuExtension):

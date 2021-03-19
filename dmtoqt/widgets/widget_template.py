@@ -10,10 +10,12 @@
 # in the file LICENSE that is included with this distribution.
 ###########################################################################
 
+import logging
+
+from lxml import etree
+
 from .BaseWidget import BaseWidget
 
-import logging
-from lxml import etree
 
 class widget_template(BaseWidget):
 

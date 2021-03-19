@@ -13,16 +13,19 @@
 
 if __name__ == "__main__":
     import argparse
-    import sys
-    import os
     import glob
     import logging
+    import os
+    import sys
+
+    from lxml import etree as ElementTree
+
+    from version import version as v
+
+    from .ColorsParser import ColorsParser
     from .DMReader import DMReader
     from .UIWriter import UIWriter
-    from .ColorsParser import ColorsParser
-    from lxml import etree as ElementTree
     from .widgets.BaseWidget import BaseWidget
-    from version import version as v
 
     docurl = "https://controls.als.lbl.gov/alscg/dmtoqt"
     if "DMTOQT_DOCURL" in os.environ:

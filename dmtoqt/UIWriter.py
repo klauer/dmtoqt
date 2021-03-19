@@ -9,12 +9,14 @@
 # in the file LICENSE that is included with this distribution.
 ###########################################################################
 import logging
-from .widgets.BaseWidget import BaseWidget
-from .widgets.activeWindowClass import activeWindowClass
-from .ColorsParser import ColorsParser
-from lxml import etree
 import sys
+
+from lxml import etree
+
 from . import widgets
+from .ColorsParser import ColorsParser
+from .widgets.activeWindowClass import activeWindowClass
+from .widgets.BaseWidget import BaseWidget
 
 
 class UIWriter:

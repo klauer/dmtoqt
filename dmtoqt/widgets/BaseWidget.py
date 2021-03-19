@@ -5,8 +5,10 @@
 ###########################################################################
 
 import logging
-from lxml import etree
 import re
+
+from lxml import etree
+
 from ..ColorsParser import RGB
 
 
