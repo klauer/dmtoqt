@@ -7,7 +7,7 @@
 # This file is distributed subject to a Software License Agreement found
 # in the file LICENSE that is included with this distribution.
 ###########################################################################
-from src.EDMWidget import EDMWidget
+from .EDMWidget import EDMWidget
 
 
 class StackedEDMWidget(EDMWidget):

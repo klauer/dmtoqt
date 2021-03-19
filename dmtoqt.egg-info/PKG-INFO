@@ -1,6 +1,6 @@
-Metadata-Version: 1.2
+Metadata-Version: 2.1
 Name: dmtoqt
-Version: 1.0.0
+Version: 0.1.dev4+g98eb00e.d20210319
 Summary: A tool for converting EDM displays to QT
 Home-page: https://bitbucket.org/alscg/dmtoqt
 Author: Lawrence Berkeley National Laboratory
@@ -94,3 +94,5 @@ Classifier: Operating System :: OS Independent
 Classifier: Programming Language :: Python
 Classifier: Topic :: Scientific/Engineering
 Requires-Python: >=2.7
+Provides-Extra: dev
+Provides-Extra: test

@@ -22,7 +22,7 @@ import logging
 import argparse
 import subprocess
 import re
-from src.edmVarTypes import Variable, knownVariableTypes
+from .edmVarTypes import Variable, knownVariableTypes
 
 
 class Property(dict):

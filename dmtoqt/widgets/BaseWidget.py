@@ -16,7 +16,7 @@ class BaseWidget(object):
     """
 
     # Possible values for supported frameworks
-    frameworks = ["EpicsQt", "caQtDM"]
+    frameworks = ["EpicsQt", "caQtDM", "PyDM"]
 
     def __init__(self, widget):
         """Constructor
@@ -534,17 +534,18 @@ class BaseWidget(object):
         return elem
 
     def visPvUI(self, elem):
-        """Does nothing if the output widget type is not a CaQtDM widget,
-                or if 'visPv' is not in self.widget.props.
+        """
+        Does nothing if the output widget type is not a CaQtDM widget, or if
+        'visPv' is not in self.widget.props.
 
-                Handles the EDM properties:
-                visPv, visMin, visMax, visInvert
+        Handles the EDM properties:
+        visPv, visMin, visMax, visInvert
 
-                Writes the Qt properties:
-                channel, visibilityCalc, visibility
+        Writes the Qt properties:
+        channel, visibilityCalc, visibility
 
         Args:
-                elem (lxml.etree.elem): The parent XML element
+            elem (lxml.etree.elem): The parent XML element
         """
         if self.framework() != "caQtDM":
             return

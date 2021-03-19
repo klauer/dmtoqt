@@ -14,8 +14,8 @@ import sys
 import os
 import re
 from collections import OrderedDict
-from EDMWidget import EDMWidget
-from StackedEDMWidget import StackedEDMWidget
+from .EDMWidget import EDMWidget
+from .StackedEDMWidget import StackedEDMWidget
 
 
 class DMReader:

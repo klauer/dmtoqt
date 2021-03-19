@@ -17,11 +17,11 @@ if __name__ == "__main__":
     import os
     import glob
     import logging
-    from src.DMReader import DMReader
-    from src.UIWriter import UIWriter
-    from src.ColorsParser import ColorsParser
+    from .DMReader import DMReader
+    from .UIWriter import UIWriter
+    from .ColorsParser import ColorsParser
     from lxml import etree as ElementTree
-    from src.widgets.BaseWidget import BaseWidget
+    from .widgets.BaseWidget import BaseWidget
     from version import version as v
 
     docurl = "https://controls.als.lbl.gov/alscg/dmtoqt"

@@ -1,7 +1,9 @@
+.gitignore
 .hgignore
 .hgtags
 Doxyfile
 LICENSE
+PKG-INFO
 README.rst
 README_DOCUMENTATION.txt
 debugFindEDMProps.sh
