@@ -85,6 +85,10 @@ if not colorsParser.readColorsFile():
     logger.warn("Unable to read colors file; colors may not appear correct")
 
 if args.framework is not None:
+    if 'PyDM' in args.framework:
+        import pydm
+        import PyQt5.QtWidgets
+        app = PyQt5.QtWidgets.QApplication([])
     BaseWidget.frameworks = args.framework
 
 success = 0

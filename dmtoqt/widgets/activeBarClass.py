@@ -30,7 +30,9 @@ class activeBarClass(BaseWidget):
     def widgetUI(self, parent):
         elem = self.startWidget(parent)
         """ Add your widget-specific properties here """
-        if self.framework() == "EpicsQt":
+        if self.framework() == "PyDM":
+            pass
+        elif self.framework() == "EpicsQt":
             self.property(elem, "variable", "indicatorPv", "string")
             self.property(elem, "showScale", "showScale", "boolean")
             # The showText property is set in DMReader.findRedundantWidgets; if not present

@@ -44,15 +44,19 @@ class activeXTextDspClass(BaseWidget):
         if "precision" in self.widget.props and "limitsFromDb" not in self.widget.props:
             self.intProperty(elem, "precision", self.widget.props["precision"])
             self.booleanProperty(elem, "useDbPrecision", False)
-        elif "format" in self.widget.props:
+        elif "format" in self.widget.props and self.framework() != "PyDM":
             if self.widget.props["format"] == "hex":
                 self.numberProperty(elem, "radix", 16)
                 self.numberProperty(elem, "precision", 0)
         # self.property(elem, 'fieldLen', 'fieldLen', 'unknowntype')
         # self.property(elem, 'noExecuteClipMask', 'noExecuteClipMask', 'unknowntype')
         # self.property(elem, 'clipToDspLimits', 'clipToDspLimits', 'unknowntype')
-        if "showUnits" not in self.widget.props:
-            self.booleanProperty(elem, "addUnits", False)
+        show_units = "showUnits" in self.widget.props
+        if self.framework() == "PyDM":
+            self.booleanProperty(elem, "showUnits", show_units, std_set=False)
+        else:
+            if "showUnits" not in self.widget.props:
+                self.booleanProperty(elem, "addUnits", False)
         # self.property(elem, 'addUnits', 'showUnits', 'boolean')
         # self.property(elem, 'autoHeight', 'autoHeight', 'unknowntype')
         # self.property(elem, 'smartRefresh', 'smartRefresh', 'unknowntype')
@@ -72,14 +76,16 @@ class activeXTextDspClass(BaseWidget):
             applyss = True
             rgb = self.colors.getRGB(self.widget.props["bgColor"])
             ss += " background-color: %s" % str(rgb)
-        if applyss:
+
+        if applyss and self.framework() != "PyDM":
             ss += "}"
             self.stringProperty(elem, "defaultStyle", ss, {"notr": "true"})
 
-        # self.property(elem, 'fgColor', 'fgColor', 'color')
-        self.enumProperty(
-            elem, "displayAlarmStateOption", "WhenInAlarm", {"stdset": "0"}
-        )
+        if self.framework() != "PyDM":
+            # self.property(elem, 'fgColor', 'fgColor', 'color')
+            self.enumProperty(
+                elem, "displayAlarmStateOption", "WhenInAlarm", {"stdset": "0"}
+            )
 
         # self.property(elem, 'fgAlarm', 'fgAlarm', 'unknowntype')
         # self.property(elem, 'useAlarmBorder', 'useAlarmBorder', 'unknowntype')

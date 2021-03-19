@@ -63,6 +63,10 @@ class activeRectangleClass(BaseWidget):
                 )
                 if subelem is None:
                     self.logger.warn("Failed to write property colour0 with alpha=0")
+        elif self.framework() == "PyDM":
+            pass
+            # self.property(elem, "lineColor", "lineColor", "color")
+            # self.property(elem, "foreground", "fillColor", "color")
         else:  # caQtDM
             self.property(elem, "lineColor", "lineColor", "color")
             self.property(elem, "foreground", "fillColor", "color")

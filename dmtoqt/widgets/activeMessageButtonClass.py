@@ -30,6 +30,10 @@ class activeMessageButtonClass(BaseWidget):
         """ Add your widget-specific properties here """
         """ When format is "Default", the default sent string ("1") causes an error, so we
 			need "Integer" format instead.  This problem may be fixed at some point in EpicsQt. """
+        if self.framework() == "PyDM":
+            # TODO
+            return elem
+
         self.enumProperty(elem, "format", "Integer")
         # self.property(elem, 'useEnumNumeric', 'useEnumNumeric', 'unknowntype')
         """ Using updateOption == "State" seems to work best for most pvs """
@@ -101,7 +105,7 @@ class activeMessageButtonClass(BaseWidget):
         return False
 
     def widgetType(self):
-        if self.framework() == "PyDMPushButton":
+        if self.framework() == "PyDM":
             return "PyDMPushButton"
         return "QEPushButton"
 

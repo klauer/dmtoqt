@@ -4,12 +4,52 @@
 # in the file LICENSE that is included with this distribution.
 ###########################################################################
 
+import functools
 import logging
 import re
 
 from lxml import etree
 
 from ..ColorsParser import RGB
+
+logger = logging.getLogger(__name__)
+
+
+@functools.lru_cache()
+def find_pydm_submodules():
+    """Find all pydm widgets submodules, as a dictionary of name to module."""
+    import pydm
+    import sys
+    import pathlib
+    import pkgutil
+    import importlib
+
+    module_path = pathlib.Path(pydm.__file__).parent
+    modules = {}
+    widgets_root = str(module_path / 'widgets')
+    for item in pkgutil.walk_packages(path=[widgets_root],
+                                      prefix='pydm.widgets.'):
+        if item.name in ("pydm.widgets.qtplugins", "pydm.widgets.qtplugin_base"):
+            continue
+        try:
+            modules[item.name] = sys.modules[item.name]
+        except KeyError:
+            # Submodules may not yet be imported; do that here.
+            try:
+                modules[item.name] = importlib.import_module(
+                    item.name, package='pydm.widgets'
+                )
+            except Exception:
+                logger.exception('Failed to import %s', item.name)
+
+    return modules
+
+
+def find_pydm_widget(widget_class_name):
+    for mod_name, mod in find_pydm_submodules().items():
+        cls = getattr(mod, widget_class_name, None)
+        if cls is not None:
+            return cls
 
 
 class BaseWidget(object):
@@ -125,13 +165,16 @@ class BaseWidget(object):
         Returns:
                 lxml.etree.elem: The created XML sub element
         """
+        prop_kw = {}
         if self.framework() == 'PyDM':
             # HACK because I haven't changed any widgets
             if name == "variable":
                 name = "channel"
+                value = value.replace("(", "{").replace(")", "}")
                 value = f"ca://{value}"
+                prop_kw = {"stdset": "0"}
 
-        subelem = etree.SubElement(elem, "property", {"name": name})
+        subelem = etree.SubElement(elem, "property", {"name": name, **prop_kw})
         strelem = etree.SubElement(subelem, "string", txtattrs)
         """ Any ampersands must be doubled so that Qt displays them correctly """
         if isinstance(value, bytes):
@@ -206,7 +249,7 @@ class BaseWidget(object):
         strelem.text = str(value)
         return subelem
 
-    def booleanProperty(self, elem, name, value):
+    def booleanProperty(self, elem, name, value, std_set=True):
         """Maps a property as a boolean.
 
         Args:
@@ -217,7 +260,7 @@ class BaseWidget(object):
         Returns:
                 lxml.etree.elem: The created XML sub element
         """
-        subelem = etree.SubElement(elem, "property", {"name": name})
+        subelem = etree.SubElement(elem, "property", {"name": name, "stdset": str(int(std_set))})
         strelem = etree.SubElement(subelem, "bool")
         strelem.text = str(value).lower()
         return subelem
@@ -256,6 +299,11 @@ class BaseWidget(object):
         Returns:
                 lxml.etree.elem: The created XML sub element
         """
+        if self.framework() == "PyDM":
+            if name in {"displayAlarmStateOption", "format", "updateOption", "writeOnPress"}:
+                # TODO
+                return
+
         attrs["name"] = name
         subelem = etree.SubElement(elem, "property", attrs)
         strelem = etree.SubElement(subelem, "enum")
@@ -491,6 +539,10 @@ class BaseWidget(object):
         Returns:
                 boolean: True if the property was written, False otherwise.
         """
+        if self.framework() == "PyDM":
+            # TODO
+            return False
+
         ss = self.widgetType() + " { "
         applyss = False
         for ssprop, edmprop in list(props.items()):
@@ -537,6 +589,28 @@ class BaseWidget(object):
         """
         if self.isBuiltInWidget():
             return None
+
+        if self.framework() == "PyDM":
+            elem = etree.SubElement(parent, "customwidget")
+            clselem = etree.SubElement(elem, "class")
+
+            class_name = self.widgetType()
+            clselem.text = class_name
+
+            widget_cls = find_pydm_widget(class_name)
+            extelem = etree.SubElement(elem, "extends")
+            extends_cls = widget_cls.__bases__[0].__name__
+            extends_cls = {
+                "PyDMDrawing": "QWidget",
+            }.get(extends_cls, extends_cls)
+            extelem.text = extends_cls
+            hdrelem = etree.SubElement(elem, "header")
+            hdrelem.text = widget_cls.__module__
+            if self.isContainer():
+                ctrelem = etree.SubElement(elem, "container")
+                ctrelem.text = "1"
+            return elem
+
         elem = etree.SubElement(parent, "customwidget")
         clselem = etree.SubElement(elem, "class")
         clselem.text = self.widgetType()

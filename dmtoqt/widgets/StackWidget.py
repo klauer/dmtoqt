@@ -112,6 +112,10 @@ class StackWidget(BaseWidget):
                         visMaxs.append("na")
                     visInverts.append(str("visInvert" in w.props))
 
+        if self.widgetType() == 'PyDMLabel':
+            # TODO
+            return
+
         if len(alarmpvs) > 1:
             self.logger.warn(
                 'Widget stack of %d widgets contains more than one alarmPv.  You must fix this manually in your .ui file.  The pvs will be listed in a property of the widget called "alarmPvs".'
