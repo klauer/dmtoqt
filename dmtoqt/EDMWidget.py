@@ -1,6 +1,6 @@
 """
 .. module:: EDMWidget
-	:synopsis: Simple class to hold the properties of an EDM widget
+        :synopsis: Simple class to hold the properties of an EDM widget
 
 """
 ###########################################################################
@@ -28,6 +28,7 @@ class EDMWidget(object):
         self.children = []
         # extra: any additional parameters added to the class declaration; e.g. 'activeXTextDspClass:noedit'
         self.extra = ""
+        self.group_stack = []
 
     def setProperty(self, name, value):
         """Set a property name-value pair.
@@ -40,29 +41,37 @@ class EDMWidget(object):
                 name (string): The property name
                 value (any): The property value
         """
-        if name in list(self.version.keys()):
+        if name in self.version:
             self.version[name] = value
-            return
-        elif name in list(self.geometry.keys()):
+        elif name in self.geometry:
             self.geometry[name] = value
-            return
-        if self.currentGroup is not None:
-            self.props[self.currentGroup][name] = value
-            return
-        self.props[name] = value
+        elif self.currentGroup is not None:
+            # self.props[self.currentGroup][name] = value
+            group_name, group_dict = self.group_stack[-1]
+            group_dict[name] = value
+        else:
+            self.props[name] = value
 
     def beginGroup(self, groupname):
         """Start a group property; that is, a property whose value is an array
 
         Args:
-                groupname (string): The name of the property
+            groupname (string): The name of the property
         """
-        self.setProperty(groupname, OrderedDict())
+        if " " in groupname:
+            groupname = groupname.split(" ")[0]
+        value = OrderedDict()
+        self.setProperty(groupname, value)
         self.currentGroup = groupname
+        self.group_stack.append((groupname, value))
 
     def endGroup(self):
         """ Finish a group property. """
-        self.currentGroup = None
+        self.group_stack.pop(-1)
+        if self.group_stack:
+            self.currentGroup, _ = self.group_stack[-1]
+        else:
+            self.currentGroup = None
 
     def addChild(self, widget):
         """Add a child widget to self.children.

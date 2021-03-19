@@ -31,13 +31,13 @@ class DMReader:
     _re_comment = re.compile(r"^# \((.*)\)")
 
     # regular expression: object declaration
-    _re_objdecl = re.compile(r"^object ([^:]+)(:.+)?")
+    _re_objdecl = re.compile(r"^object\s+([^:]+)(:.+)?")
 
     # regular expression: name-value pair
-    _re_namevalue = re.compile(r'^([^" ]+) "?([^"]+)"?')
+    _re_namevalue = re.compile(r'^([^" ]+)\s+"?([^"]+)"?')
 
     # regular expression: name-empty value pair
-    _re_emptyvalue = re.compile(r'^([^" ]+) ""$')
+    _re_emptyvalue = re.compile(r'^([^" ]+)\s+""$')
 
     # regular expression: boolean value (name only)
     _re_boolvalue = re.compile(r'^([^" ]+)$')
@@ -211,8 +211,8 @@ class DMReader:
                     "Invalid input file format, please check (at or near line %d)"
                     % self.lineno
                 )
-            if line.endswith(" {"):
-                widget.beginGroup(line[0 : len(line) - 2])
+            if line.endswith("{"):
+                widget.beginGroup(line.rsplit("{")[0].rstrip())
                 self.groupCount = 0
                 continue
             if line == "}":

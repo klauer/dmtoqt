@@ -122,6 +122,8 @@ class BaseWidget(object):
         subelem = etree.SubElement(elem, "property", {"name": name})
         strelem = etree.SubElement(subelem, "string", txtattrs)
         """ Any ampersands must be doubled so that Qt displays them correctly """
+        if isinstance(value, bytes):
+            value = value.decode('utf-8')
         strelem.text = value.replace("&", "&&")
         return subelem
 

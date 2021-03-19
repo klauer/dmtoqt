@@ -159,13 +159,20 @@ class activeLineClass(BaseWidget):
                 ):
                     self.booleanProperty(elem, "drawBorder", False)
             self.enumProperty(elem, "shape", shape)
-            self.intProperty(elem, "numPoints", len(self.widget.props["xPoints"]))
+            if "numPoints" in self.widget.props:
+                x_points = self.widget.props["numPoints"]["xPoints"]
+                y_points = self.widget.props["numPoints"]["yPoints"]
+            else:
+                x_points = self.widget.props["xPoints"]
+                y_points = self.widget.props["yPoints"]
+
+            self.intProperty(elem, "numPoints", len(x_points))
             self.property(elem, "lineWidth", "lineWidth", "int")
             left = int(self.widget.geometry["x"])
             top = int(self.widget.geometry["y"])
-            for i in range(len(self.widget.props["xPoints"])):
-                x = int(self.widget.props["xPoints"][str(i)]) - left
-                y = int(self.widget.props["yPoints"][str(i)]) - top
+            for i in range(len(x_points)):
+                x = int(x_points[str(i)]) - left
+                y = int(y_points[str(i)]) - top
                 subelem = etree.SubElement(
                     elem, "property", {"name": "point%d" % (i + 1), "stdset": "0"}
                 )
