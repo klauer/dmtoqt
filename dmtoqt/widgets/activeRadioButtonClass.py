@@ -85,6 +85,8 @@ class activeRadioButtonClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMEnumButton"
         return "QERadioGroup"
 
     def widgetName(self):

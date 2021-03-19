@@ -76,6 +76,8 @@ class activeWindowClass(BaseWidget):
         return True
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMFrame"
         if self.framework() == "EpicsQt":
             if (
                 "templateParams" in self.widget.props

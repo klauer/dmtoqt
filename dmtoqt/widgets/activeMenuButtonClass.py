@@ -57,6 +57,8 @@ class activeMenuButtonClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMEnumComboBox"
         return "QEComboBox"
 
     def widgetName(self):

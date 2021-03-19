@@ -117,6 +117,8 @@ class activeButtonClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMPushButton"
         if self.framework() == "EpicsQt":
             if (
                 "buttonType" in self.widget.props

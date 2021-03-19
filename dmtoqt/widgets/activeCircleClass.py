@@ -83,6 +83,8 @@ class activeCircleClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMDrawingCircle"
         if self.framework() == "EpicsQt":
             if (
                 ("fillAlarm" in self.widget.props) or ("lineAlarm" in self.widget.props)

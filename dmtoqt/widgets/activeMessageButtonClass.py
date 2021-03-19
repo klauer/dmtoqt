@@ -101,6 +101,8 @@ class activeMessageButtonClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDMPushButton":
+            return "PyDMPushButton"
         return "QEPushButton"
 
     def widgetName(self):

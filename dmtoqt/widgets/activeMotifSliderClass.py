@@ -140,6 +140,8 @@ class activeMotifSliderClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMSlider"
         if "orientation" in self.widget.props:
             return "QESlider"  # QEAnalogSlider cannot be vertical
         flags = ["showLabel", "showLimits", "showSavedValue", "showValue"]

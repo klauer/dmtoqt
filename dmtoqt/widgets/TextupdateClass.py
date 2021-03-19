@@ -66,6 +66,8 @@ class TextupdateClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMLabel"
         return "QELabel"
 
     def widgetName(self):

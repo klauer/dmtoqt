@@ -172,6 +172,8 @@ class relatedDisplayClass(BaseWidget):
         return elem
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMRelatedDisplayButton"
         if self.framework() == "EpicsQt":
             if self.isMenuButton():
                 return "QEMenuButton"

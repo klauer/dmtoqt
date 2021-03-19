@@ -211,6 +211,8 @@ class activeLineClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMDrawingPolygon"
         if "xPoints" in self.widget.props and len(self.widget.props["xPoints"]) == 2:
             if "visPv" in self.widget.props and self.framework() == "caQtDM":
                 return "caPolyLine"

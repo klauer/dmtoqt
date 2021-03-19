@@ -105,6 +105,8 @@ class activeXTextClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMLabel"
         if self.framework() == "EpicsQt":
             if "value" in self.widget.props:
                 found = False

@@ -212,6 +212,8 @@ class xyGraphClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMTimePlot"
         return "QEPlot"
 
     def widgetName(self):

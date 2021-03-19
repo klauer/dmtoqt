@@ -124,6 +124,10 @@ class activeXTextDspClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            if self.widget.extra == ":noedit":
+                return "PyDMLabel"
+            return "PyDMLineEdit"
         # "Text Monitor" and "Text Control" share this EDM class; the widget type
         # is appended with ":noedit" for Text Monitor
         if self.widget.extra == ":noedit":

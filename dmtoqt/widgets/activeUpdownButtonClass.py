@@ -62,6 +62,8 @@ class activeUpdownButtonClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMSpinbox"
         return "QESpinBox"
 
     def widgetName(self):

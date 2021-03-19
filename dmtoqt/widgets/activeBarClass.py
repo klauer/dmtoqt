@@ -158,6 +158,8 @@ class activeBarClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMSlider"
         if self.framework() == "EpicsQt":
             return "QEAnalogProgressBar"
         return "caLinearGauge"

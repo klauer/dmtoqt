@@ -247,6 +247,11 @@ class StackWidget(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            if self.widget.stackType() == "labels":
+                return "PyDMLabel"
+            return "PyDMLabel"   # ?
+
         if self.widget.stackType() == "labels":
             return "QELabel"
         return "QESimpleShape"

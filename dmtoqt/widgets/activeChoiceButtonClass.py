@@ -128,6 +128,8 @@ class activeChoiceButtonClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMEnumButton"
         if self.framework() == "EpicsQt":
             return "QERadioGroup"
         return "caChoice"
