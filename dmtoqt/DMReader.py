@@ -259,7 +259,7 @@ class DMReader:
                 type (string): The type of widget to be created
 
         Returns:
-                src.EDMWidget.EDMWidget: the created widget
+                EDMWidget.EDMWidget: the created widget
         """
         return EDMWidget(type)
 
@@ -274,7 +274,7 @@ class DMReader:
                 case the parent parameter will be set to the containing widget.
 
         Args:
-                parent (src.EDMWidget.EDMWidget): The parent widget
+                parent (EDMWidget.EDMWidget): The parent widget
 
         Returns:
                 boolean: True on success, False otherwise
@@ -353,7 +353,7 @@ class DMReader:
                 case the parent parameter will be set to the containing widget.
 
         Args:
-                parent (src.EDMWidget.EDMWidget): The parent widget
+                parent (EDMWidget.EDMWidget): The parent widget
 
         Returns:
                 boolean: True on success, False otherwise
@@ -412,8 +412,8 @@ class DMReader:
                 drawn around a group of widgets.
 
         Args:
-                widget (src.EDMWidget.EDMWidget): One of the widgets
-                widget2 (src.EDMWidget.EDMWidget): The other widget
+                widget (EDMWidget.EDMWidget): One of the widgets
+                widget2 (EDMWidget.EDMWidget): The other widget
 
         Returns:
                 boolean: True if the widgets overlap; False otherwise
@@ -446,8 +446,8 @@ class DMReader:
         """Adds widget to the collection, removing any sub-widgets
 
         Args:
-                stackedEDMWidget (src.StackedEDMWidget.StackedEDMWidget): The StackedEDMWidget instance
-                parent (src.EDMWidget.EDMWidget): The parent widget or None to use DMReader
+                stackedEDMWidget (StackedEDMWidget.StackedEDMWidget): The StackedEDMWidget instance
+                parent (EDMWidget.EDMWidget): The parent widget or None to use DMReader
 
         Returns:
                 boolean: True on success; False if an error occurs

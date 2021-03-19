@@ -9,12 +9,12 @@
 # in the file LICENSE that is included with this distribution.
 ###########################################################################
 import logging
-from src.widgets.BaseWidget import BaseWidget
-from src.widgets.activeWindowClass import activeWindowClass
+from .widgets.BaseWidget import BaseWidget
+from .widgets.activeWindowClass import activeWindowClass
 from ColorsParser import ColorsParser
-from imp import load_source
 from lxml import etree
 import sys
+from . import widgets
 
 
 class UIWriter:
@@ -108,11 +108,6 @@ class UIWriter:
 
                 Internal function, not intended to be called from outside this class.
 
-                Uses the python load_source mechanism to load the widget type from the
-                ## widgets subdirectory, using the EDM widget type as the python file name.
-                ## This allows implementing new EDM widget types by adding appropriately named
-                ## python files to the widgets subdirectory.
-
         Args:
                  topWidget (src.EDMWidget.EDMWidget): The top-level widget (used in determining font)
                  widget (src.EDMWidget.EDMWidget): The widget to be written
@@ -124,12 +119,9 @@ class UIWriter:
         self.logger.debug("Widget type %s.." % widget.type)
         if widget.type not in list(self.customwidgetdefs.keys()):
             try:
-                load_source("src.widgets", "src/widgets/%s.py" % widget.type)
-                import src.widgets
-
-                wout = eval(
-                    "src.widgets." + widget.type + "(widget)", globals(), locals()
-                )
+                module = getattr(widgets, widget.type)
+                cls = getattr(module, widget.type)
+                wout = cls(widget)
                 if not wout:
                     self.logger.critical(
                         "Cannot create object of type %s" % widget.type
