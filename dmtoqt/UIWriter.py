@@ -11,7 +11,7 @@
 import logging
 from .widgets.BaseWidget import BaseWidget
 from .widgets.activeWindowClass import activeWindowClass
-from ColorsParser import ColorsParser
+from .ColorsParser import ColorsParser
 from lxml import etree
 import sys
 from . import widgets
@@ -134,9 +134,10 @@ class UIWriter:
                 return None
             self.customwidgetdefs[widget.type] = wout
         else:
-            import src.widgets
+            module = getattr(widgets, widget.type)
+            cls = getattr(module, widget.type)
+            wout = cls(widget)
 
-            wout = eval("src.widgets." + widget.type + "(widget)", globals(), locals())
         wout.setColors(self.colors)
         wout.setTopWidget(topWidget)
         welem = wout.widgetUI(parentelem)

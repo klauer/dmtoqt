@@ -3,8 +3,8 @@
 # This file is distributed subject to a Software License Agreement found
 # in the file LICENSE that is included with this distribution.
 ###########################################################################
-from src.widgets.BaseWidget import BaseWidget
-import src.widgets
+from .BaseWidget import BaseWidget
+
 import logging
 from lxml import etree
 import math

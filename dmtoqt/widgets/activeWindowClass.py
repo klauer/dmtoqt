@@ -3,9 +3,9 @@
 # This file is distributed subject to a Software License Agreement found
 # in the file LICENSE that is included with this distribution.
 ###########################################################################
-from src.widgets.BaseWidget import BaseWidget
+from .BaseWidget import BaseWidget
 from lxml import etree as ElementTree
-import src.widgets
+
 import logging
 from lxml import etree
 

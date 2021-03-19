@@ -7,7 +7,7 @@
 import logging
 from lxml import etree
 import re
-from src.ColorsParser import RGB
+from ..ColorsParser import RGB
 
 
 class BaseWidget(object):
