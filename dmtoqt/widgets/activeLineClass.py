@@ -146,6 +146,9 @@ class activeLineClass(BaseWidget):
                         shape = "arrowRight"
             self.enumProperty(elem, "shape", shape)
 
+        elif self.widgetType() == "PyDMDrawingPolygon":
+            # TODO
+            pass
         else:  # EpicsQt
             shape = "QEShape::Polyline"
             if "fill" in self.widget.props:
@@ -211,6 +214,8 @@ class activeLineClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMDrawingPolygon"
         if "xPoints" in self.widget.props and len(self.widget.props["xPoints"]) == 2:
             if "visPv" in self.widget.props and self.framework() == "caQtDM":
                 return "caPolyLine"

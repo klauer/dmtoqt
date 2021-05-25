@@ -4,12 +4,52 @@
 # in the file LICENSE that is included with this distribution.
 ###########################################################################
 
+import functools
 import logging
 import re
 
 from lxml import etree
 
 from ..ColorsParser import RGB
+
+logger = logging.getLogger(__name__)
+
+
+@functools.lru_cache()
+def find_pydm_submodules():
+    """Find all pydm widgets submodules, as a dictionary of name to module."""
+    import pydm
+    import sys
+    import pathlib
+    import pkgutil
+    import importlib
+
+    module_path = pathlib.Path(pydm.__file__).parent
+    modules = {}
+    widgets_root = str(module_path / 'widgets')
+    for item in pkgutil.walk_packages(path=[widgets_root],
+                                      prefix='pydm.widgets.'):
+        if item.name in ("pydm.widgets.qtplugins", "pydm.widgets.qtplugin_base"):
+            continue
+        try:
+            modules[item.name] = sys.modules[item.name]
+        except KeyError:
+            # Submodules may not yet be imported; do that here.
+            try:
+                modules[item.name] = importlib.import_module(
+                    item.name, package='pydm.widgets'
+                )
+            except Exception:
+                logger.exception('Failed to import %s', item.name)
+
+    return modules
+
+
+def find_pydm_widget(widget_class_name):
+    for mod_name, mod in find_pydm_submodules().items():
+        cls = getattr(mod, widget_class_name, None)
+        if cls is not None:
+            return cls
 
 
 class BaseWidget(object):
@@ -18,7 +58,7 @@ class BaseWidget(object):
     """
 
     # Possible values for supported frameworks
-    frameworks = ["EpicsQt", "caQtDM", "PyDM"]
+    frameworks = ["EpicsQt", "caQtDM"]
 
     def __init__(self, widget):
         """Constructor
@@ -46,65 +86,71 @@ class BaseWidget(object):
         self.topWidget = topWidget
 
     def property(self, elem, uiname, edmname, type):
-        """Map an EDM property name/value to the Qt equivalent,
-                if the EDM property is set.
+        """
+        Map an EDM property name/value to the Qt equivalent, if the EDM property is set.
 
-                Does nothing if the property does not appear in the .edl file.
-                Uses the appropriate member xxxProperty function according to
-                the type parameter, mapping the property name from edmname
-                to uiname.
+        Does nothing if the property does not appear in the .edl file.  Uses
+        the appropriate member xxxProperty function according to the type
+        parameter, mapping the property name from edmname to uiname.
 
         Args:
-                elem (lxml.etree.elem): The parent XML element
-                uiname (string): The property name in Qt
-                edmname (string): The property name in EDM
-                type (string): The type of this parameter.  Possible values:
+            elem (lxml.etree.elem): The parent XML element
+            uiname (string): The property name in Qt
+            edmname (string): The property name in EDM
+            type (string): The type of this parameter.  Possible values:
 
-                        * int
-                        * float
-                        * number
-                        * string
-                        * stringList
-                        * boolean
-                        * set
-                        * color
-                        * font
+            * int
+            * float
+            * number
+            * string
+            * stringList
+            * boolean
+            * set
+            * color
+            * font
 
         Returns:
-                lxml.etree.elem: The created XML sub element, or None if an error occurs
+            lxml.etree.elem: The created XML sub element, or None if an error occurs
         """
         subelem = None
         if type == "unknowntype":
             return subelem
-        if edmname in list(self.widget.props.keys()):
-            prop = self.widget.props[edmname]
-            if type == "int":
-                subelem = self.intProperty(elem, uiname, prop)
-            elif type == "float":
-                subelem = self.doubleProperty(elem, uiname, prop)
-            elif type == "number":
-                subelem = self.numberProperty(elem, uiname, prop)
-            elif type == "string":
-                subelem = self.stringProperty(elem, uiname, prop)
-            elif type == "stringList":
-                subelem = self.stringListProperty(elem, uiname, prop)
-            elif type == "boolean":
-                subelem = self.booleanProperty(elem, uiname, prop)
-            elif type == "set":
-                subelem = self.setProperty(elem, uiname, prop)
-            elif type == "color":
-                subelem = self.colorProperty(elem, uiname, prop)
-            elif type == "font":
-                subelem = self.fontProperty(elem, uiname, prop)
-            else:
-                self.logger.warn(
-                    'Unknown type for property "%s"("%s"); skipping' % (edmname, uiname)
-                )
-                return None
-            if subelem is None:
-                self.logger.warn(
-                    'Failed to write property "%s"("%s")' % (edmname, uiname)
-                )
+        if edmname not in self.widget.props:
+            self.logger.warn(
+                'Failed to write property "%s"("%s")', edmname, uiname
+            )
+            return None
+
+        prop = self.widget.props[edmname]
+        if type == "int":
+            subelem = self.intProperty(elem, uiname, prop)
+        elif type == "float":
+            subelem = self.doubleProperty(elem, uiname, prop)
+        elif type == "number":
+            subelem = self.numberProperty(elem, uiname, prop)
+        elif type == "string":
+            subelem = self.stringProperty(elem, uiname, prop)
+        elif type == "stringList":
+            subelem = self.stringListProperty(elem, uiname, prop)
+        elif type == "boolean":
+            subelem = self.booleanProperty(elem, uiname, prop)
+        elif type == "set":
+            subelem = self.setProperty(elem, uiname, prop)
+        elif type == "color":
+            subelem = self.colorProperty(elem, uiname, prop)
+        elif type == "font":
+            subelem = self.fontProperty(elem, uiname, prop)
+        else:
+            self.logger.warn(
+                'Unknown type for property "%s"("%s"); skipping', edmname,
+                uiname
+            )
+            return None
+
+        if subelem is None:
+            self.logger.warn(
+                'Failed to write property "%s"("%s")' % (edmname, uiname)
+            )
         return subelem
 
     def stringProperty(self, elem, name, value, txtattrs={}):
@@ -119,7 +165,16 @@ class BaseWidget(object):
         Returns:
                 lxml.etree.elem: The created XML sub element
         """
-        subelem = etree.SubElement(elem, "property", {"name": name})
+        prop_kw = {}
+        if self.framework() == 'PyDM':
+            # HACK because I haven't changed any widgets
+            if name == "variable":
+                name = "channel"
+                value = value.replace("(", "{").replace(")", "}")
+                value = f"ca://{value}"
+                prop_kw = {"stdset": "0"}
+
+        subelem = etree.SubElement(elem, "property", {"name": name, **prop_kw})
         strelem = etree.SubElement(subelem, "string", txtattrs)
         """ Any ampersands must be doubled so that Qt displays them correctly """
         if isinstance(value, bytes):
@@ -194,7 +249,7 @@ class BaseWidget(object):
         strelem.text = str(value)
         return subelem
 
-    def booleanProperty(self, elem, name, value):
+    def booleanProperty(self, elem, name, value, std_set=True):
         """Maps a property as a boolean.
 
         Args:
@@ -205,7 +260,7 @@ class BaseWidget(object):
         Returns:
                 lxml.etree.elem: The created XML sub element
         """
-        subelem = etree.SubElement(elem, "property", {"name": name})
+        subelem = etree.SubElement(elem, "property", {"name": name, "stdset": str(int(std_set))})
         strelem = etree.SubElement(subelem, "bool")
         strelem.text = str(value).lower()
         return subelem
@@ -244,6 +299,11 @@ class BaseWidget(object):
         Returns:
                 lxml.etree.elem: The created XML sub element
         """
+        if self.framework() == "PyDM":
+            if name in {"displayAlarmStateOption", "format", "updateOption", "writeOnPress"}:
+                # TODO
+                return
+
         attrs["name"] = name
         subelem = etree.SubElement(elem, "property", attrs)
         strelem = etree.SubElement(subelem, "enum")
@@ -479,6 +539,10 @@ class BaseWidget(object):
         Returns:
                 boolean: True if the property was written, False otherwise.
         """
+        if self.framework() == "PyDM":
+            # TODO
+            return False
+
         ss = self.widgetType() + " { "
         applyss = False
         for ssprop, edmprop in list(props.items()):
@@ -525,6 +589,28 @@ class BaseWidget(object):
         """
         if self.isBuiltInWidget():
             return None
+
+        if self.framework() == "PyDM":
+            elem = etree.SubElement(parent, "customwidget")
+            clselem = etree.SubElement(elem, "class")
+
+            class_name = self.widgetType()
+            clselem.text = class_name
+
+            widget_cls = find_pydm_widget(class_name)
+            extelem = etree.SubElement(elem, "extends")
+            extends_cls = widget_cls.__bases__[0].__name__
+            extends_cls = {
+                "PyDMDrawing": "QWidget",
+            }.get(extends_cls, extends_cls)
+            extelem.text = extends_cls
+            hdrelem = etree.SubElement(elem, "header")
+            hdrelem.text = widget_cls.__module__
+            if self.isContainer():
+                ctrelem = etree.SubElement(elem, "container")
+                ctrelem.text = "1"
+            return elem
+
         elem = etree.SubElement(parent, "customwidget")
         clselem = etree.SubElement(elem, "class")
         clselem.text = self.widgetType()
@@ -580,6 +666,9 @@ class BaseWidget(object):
         Returns:
                 string: The current widget framework
         """
+        if "PyDM" in BaseWidget.frameworks:
+            return "PyDM"
+
         if "EpicsQt" in BaseWidget.frameworks and "caQtDM" in BaseWidget.frameworks:
             if "visPv" in self.widget.props:
                 return "caQtDM"

@@ -51,6 +51,10 @@ class activeCircleClass(BaseWidget):
                 self.colorProperty(
                     elem, "colour0", {"r": 255, "g": 255, "b": 255, "a": 0}
                 )
+        elif self.framework() == "PyDM":
+            # self.property(elem, "lineColor", "lineColor", "color")
+            # self.property(elem, "foreground", "fillColor", "color")
+            ...
         else:  # caQtDM
             self.property(elem, "lineColor", "lineColor", "color")
             self.property(elem, "foreground", "fillColor", "color")
@@ -83,6 +87,8 @@ class activeCircleClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMDrawingCircle"
         if self.framework() == "EpicsQt":
             if (
                 ("fillAlarm" in self.widget.props) or ("lineAlarm" in self.widget.props)

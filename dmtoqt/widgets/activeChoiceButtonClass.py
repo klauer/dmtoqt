@@ -89,6 +89,19 @@ class activeChoiceButtonClass(BaseWidget):
             if len(ss) > 0:
                 self.stringProperty(elem, "defaultStyle", ss)
 
+        elif self.framework() == "PyDM":
+            # TODO
+            if "controlPv" in self.widget.props:
+                self.stringProperty(elem, "variable", "controlPv")
+            else:
+                self.stringProperty(elem, "variable", "indicatorPv")
+            # self.property(elem, "foreground", "fgColor", "color")
+            # self.property(elem, "background", "bgColor", "color")
+            # self.property(elem, "bordercolor", "selectColor", "color")
+            # self.enumProperty(elem, "alignment", "center")
+            # if "orientation" in self.widget.props:
+            #     self.enumProperty(elem, "stackingMode", "Column")
+            # self.enumProperty(elem, "fontScaleMode", "None")
         else:  # caQtDM
             if "controlPv" in self.widget.props:
                 self.property(elem, "channel", "controlPv", "string")
@@ -128,6 +141,8 @@ class activeChoiceButtonClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMEnumButton"
         if self.framework() == "EpicsQt":
             return "QERadioGroup"
         return "caChoice"

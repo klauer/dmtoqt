@@ -50,6 +50,8 @@ class ByteClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMByteIndicator"
         return "QEBitStatus"
 
     def widgetName(self):

@@ -143,6 +143,8 @@ class activeMeterClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMSlider"
         return "QEAnalogProgressBar"
 
     def widgetName(self):

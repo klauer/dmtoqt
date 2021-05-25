@@ -90,6 +90,8 @@ class activeArcClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMDrawingArc"
         if self.framework() == "EpicsQt":
             return "QEShape"
         return "caGraphics"

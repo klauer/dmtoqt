@@ -1,6 +1,6 @@
 """
 .. module:: UIWriter
-	:synopsis: Defines the UIWriter class for writing to a Qt UI file.
+        :synopsis: Defines the UIWriter class for writing to a Qt UI file.
 """
 
 ###########################################################################
@@ -9,6 +9,7 @@
 # in the file LICENSE that is included with this distribution.
 ###########################################################################
 import logging
+import os
 import sys
 
 from lxml import etree
@@ -54,7 +55,7 @@ class UIWriter:
         if "title" in reader.mainWidget.props:
             classelem.text = reader.mainWidget.props["title"]
         else:
-            classelem.text = self.ofilename
+            classelem.text = "QMainWindow"
         for widget in reader.widgets:
             widget.adjustChildGeometries()
         self.topWidget.setColors(self.colors)
@@ -67,8 +68,11 @@ class UIWriter:
         self.logger.info("Wrote %d widget(s)" % len(reader.widgets))
 
         parent = etree.SubElement(root, "customwidgets")
+        wrote_custom = set()
         for cw in list(self.customwidgetdefs.values()):
-            subelem = cw.customWidgetDef(parent)
+            if cw.widgetType() not in wrote_custom:
+                subelem = cw.customWidgetDef(parent)
+                wrote_custom.add(cw.widgetType())
 
         et = etree.ElementTree(root)
         et.write(

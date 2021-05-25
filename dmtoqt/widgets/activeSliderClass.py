@@ -96,6 +96,8 @@ class activeSliderClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMSlider"
         return "QEAnalogSlider"
 
     def widgetName(self):

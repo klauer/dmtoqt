@@ -247,6 +247,8 @@ class shellCmdClass(BaseWidget):
         return False
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMShellCommand"
         if self.framework() == "EpicsQt":
             if self.isMenuButton():
                 return "QEMenuButton"

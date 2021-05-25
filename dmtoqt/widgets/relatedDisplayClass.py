@@ -111,6 +111,8 @@ class relatedDisplayClass(BaseWidget):
                         co = "Open"  # replaces current GUI
                     self.enumProperty(elem, "creationOption", co)
             self.defaultStyle(elem)
+        elif self.framework() == "PyDM":
+            pass
         else:  # caRelatedDisplay
             if "buttonLabel" in self.widget.props:
                 self.stringProperty(elem, "label", self.widget.props["buttonLabel"])
@@ -172,6 +174,8 @@ class relatedDisplayClass(BaseWidget):
         return elem
 
     def widgetType(self):
+        if self.framework() == "PyDM":
+            return "PyDMRelatedDisplayButton"
         if self.framework() == "EpicsQt":
             if self.isMenuButton():
                 return "QEMenuButton"
